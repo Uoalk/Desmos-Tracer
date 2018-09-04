@@ -1,0 +1,126 @@
+<head><title>Unnamed File</title></head>
+<script src="https://www.desmos.com/api/v1.1/calculator.js?apiKey=dcb31709b452b1cf9dc26972add0fda6"></script>
+<script
+  src="https://code.jquery.com/jquery-3.3.1.min.js"
+  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+  crossorigin="anonymous"></script>
+<div id="calculator" style="width: 1500px; height: 750px;"></div>
+<script>
+var elt = document.getElementById('calculator');
+var calculator = Desmos.GraphingCalculator(elt,{lockViewport:true, expressionsCollapsed:true, zoomButtons:false, trace:false, pointsOfInterest:false});
+
+
+
+var canvas=$(".dcg-graph-inner")[0]
+var ctx = canvas.getContext("2d");
+
+
+function getMousePos(canvas, evt) {
+  var rect = canvas.getBoundingClientRect();
+  return {
+   x: Math.round((evt.clientX-rect.left)/(rect.right-rect.left)*canvas.width),
+   y: Math.round((evt.clientY-rect.top)/(rect.bottom-rect.top)*canvas.height)
+  };
+}
+
+canvas.parentElement.parentElement.addEventListener('mousemove', function(evt) {
+ mousePos = getMousePos(canvas, evt);
+}, false);
+
+var data={
+  graphLeft:-10,
+  graphRight:10,
+  graphTop:5,
+  graphBottom:-5,
+
+  canvasLeft:0,
+  canvasRight:1500,
+  canvasTop:0,
+  canvasBottom:750
+}
+function toGraphPos(canvasX,canvasY){
+  xPercent=(canvasX-data.canvasLeft)/(data.canvasRight-data.canvasLeft);
+  graphX=(xPercent*(data.graphRight-data.graphLeft)+data.graphLeft);
+
+  yPercent=(canvasY-data.canvasTop)/(data.canvasBottom-data.canvasTop);
+  graphY=(yPercent*(data.graphBottom-data.graphTop)+data.graphTop);
+
+  return {x:graphX,y:graphY}
+}
+var currID=0;
+function nextID(){
+  currID++
+  return currID-1+"a";
+}
+var a=new circleMaker();
+canvas.parentElement.parentElement.onclick=function(){
+  var graphPos=toGraphPos(mousePos.x,mousePos.y);
+  a.nextClick(graphPos)
+}
+
+
+function getCircleData(p1,p2,p3){
+  //http://www.ambrsoft.com/trigocalc/circle3d.htm
+  var x1=p1.x; var x2=p2.x; var x3=p3.x;
+  var y1=p1.y; var y2=p2.y; var y3=p3.y;
+
+  var A=x1*(y2-y3)-y1*(x2-x3)+x2*y3-x3*y2
+  var B=(x1*x1+y1*y1)*(y3-y2)+(x2*x2+y2*y2)*(y1-y3)+(x3*x3+y3*y3)*(y2-y1)
+  var C=(x1*x1+y1*y1)*(x2-x3)+(x2*x2+y2*y2)*(x3-x1)+(x3*x3+y3*y3)*(x1-x2)
+  var D=(x1*x1+y1*y1)*(x3*y2-x2*y3)+(x2*x2+y2*y2)*(x1*y3-x3*y1)+(x3*x3+y3*y3)*(x2*y1-x1*y2)
+
+  var x=-B/(2*A)
+  var y=-C/(2*A)
+  var r=Math.sqrt((B*B+C*C-4*A*D)/(4*A*A))
+
+  return {x:x,y:y,r:r}
+}
+function addCircle(p1,p2,p3){
+  var a=getCircleData(p1,p2,p3)
+  var equation="(x-"+a.x+")^2+(y-"+a.y+")^2="+a.r+"^2"
+
+  calculator.setExpression({id:nextID(), latex:equation})
+}
+
+function addCircleSegment(p1,p2,p3){
+  var rounding=3;
+  var a=getCircleData(p1,p2,p3)
+
+  var slope=(p1.y-p3.y)/(p1.x-p3.x)
+  var yIntercept=p1.y-slope*p1.x
+
+  var restriction="";
+  if(p2.y>slope*p2.x+yIntercept){//if middle point is below the line
+    restriction="\\left\\{"+round(slope,rounding)+"*x+"+round(yIntercept,rounding)+"<y\\right\\}"
+  }else{
+    restriction="\\left\\{"+round(slope,rounding)+"*x+"+round(yIntercept,rounding)+">y\\right\\}"
+  }
+
+  var equation="(x-"+round(a.x,rounding)+")^2+(y-"+round(a.y,rounding)+")^2="+round(a.r,rounding)+"^2"+restriction
+  equation=equation.replace("--","+")
+  console.log(equation)
+  calculator.setExpression({id:nextID(), latex:equation, color:"red"})
+}
+function circleMaker(){
+  this.points=[];
+  this.nextClick=function(point){
+    this.points.push(point);
+    addPoint("refPoint"+this.points.length,point)
+    if(this.points.length==3){
+      addCircleSegment(this.points[0],this.points[1],this.points[2])
+      this.points=[]
+      calculator.removeExpression({id:"refPoint1"})
+      calculator.removeExpression({id:"refPoint2"})
+      calculator.removeExpression({id:"refPoint3"})
+    }
+  }
+}
+function addPoint(id,point){
+  calculator.setExpression({id:id, latex:"("+point.x+","+point.y+")"})
+}
+function round(num,decimalPoints){
+  return Math.round(num*Math.pow(10,decimalPoints))/(Math.pow(10,decimalPoints))
+}
+
+</script>
+<style>
