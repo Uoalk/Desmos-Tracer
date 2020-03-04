@@ -9,8 +9,10 @@
 <select id="curveType">
   <option value="arc">Arc</option>
   <option value="line">Line</option>
-
 </select>
+
+Mirror:
+<input type="checkbox" id="mirror"></input>
 
 <script>
 var elt = document.getElementById('calculator');
@@ -34,20 +36,11 @@ canvas.parentElement.parentElement.addEventListener('mousemove', function(evt) {
  mousePos = getMousePos(canvas, evt);
 }, false);
 
-var data={
-  graphLeft:-10,
-  graphRight:10,
-  graphTop:5,
-  graphBottom:-5,
 
-  canvasLeft:0,
-  canvasRight:1500,
-  canvasTop:0,
-  canvasBottom:750
-}
 function toGraphPos(canvasX,canvasY){
-  var pixel = calculator.graphpaperBounds.pixelCoordinates;
+  //var pixel = calculator.graphpaperBounds.pixelCoordinates;
   var math = calculator.graphpaperBounds.mathCoordinates;
+  var pixel = {left:0, top:0, right:canvas.width, bottom:canvas.height}
   xPercent=(canvasX-pixel.left)/(pixel.right-pixel.left);
   graphX=(xPercent*(math.right-math.left)+math.left);
 
@@ -156,8 +149,21 @@ function curveMaker(){
 
     if(type=="arc" && this.points.length>=3){
       addCircleSegment(this.points[0],this.points[1],this.points[2])
+      if($("#mirror")[0].checked){
+        this.points[0].x=-this.points[0].x;
+        this.points[1].x=-this.points[1].x;
+        this.points[2].x=-this.points[2].x;
+      }
+      addCircleSegment(this.points[0],this.points[1],this.points[2])
+
       this.points=[]
     }else if(type=="line" && this.points.length>=2){
+
+      addLineSegment(this.points[0],this.points[1])
+      if($("#mirror")[0].checked){
+        this.points[0].x=-this.points[0].x;
+        this.points[1].x=-this.points[1].x;
+      }
       addLineSegment(this.points[0],this.points[1])
       this.points=[]
     }
