@@ -103,7 +103,7 @@ function addCircleSegment(p1,p2,p3){
   equation=equation.split("Infinity").join("99999")
   equation=equation.split("NaN").join("0")
   console.log(equation)
-  calculator.setExpression({id:nextID(), latex:equation, color:"black"})
+  calculator.setExpression({id:nextID(), latex:equation, color:"red"})
 
   calculator.removeExpression({id:"refPoint1"})
   calculator.removeExpression({id:"refPoint2"})
@@ -132,7 +132,7 @@ function addLineSegment(p1, p2){
   equation=equation.split("--").join("+")
 
   console.log(equation)
-  calculator.setExpression({id:nextID(), latex:equation, color:"black"})
+  calculator.setExpression({id:nextID(), latex:equation, color:"red"})
 
   calculator.removeExpression({id:"refPoint1"})
   calculator.removeExpression({id:"refPoint2"})
