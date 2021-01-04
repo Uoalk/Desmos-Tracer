@@ -27,6 +27,7 @@ canvas.parentElement.parentElement.addEventListener('mousemove', function(evt) {
  mousePos = getMousePos(canvas, evt);
 }, false);
 
+//TODO update these values automatically
 var data={
   graphLeft:-10,
   graphRight:10,
@@ -38,6 +39,8 @@ var data={
   canvasTop:0,
   canvasBottom:750
 }
+
+//Convert mouse coordinates to position on graph
 function toGraphPos(canvasX,canvasY){
   xPercent=(canvasX-data.canvasLeft)/(data.canvasRight-data.canvasLeft);
   graphX=(xPercent*(data.graphRight-data.graphLeft)+data.graphLeft);

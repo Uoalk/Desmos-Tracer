@@ -38,7 +38,6 @@ canvas.parentElement.parentElement.addEventListener('mousemove', function(evt) {
 
 
 function toGraphPos(canvasX,canvasY){
-  //var pixel = calculator.graphpaperBounds.pixelCoordinates;
   var math = calculator.graphpaperBounds.mathCoordinates;
   var pixel = {left:0, top:0, right:canvas.width, bottom:canvas.height}
   xPercent=(canvasX-pixel.left)/(pixel.right-pixel.left);
