@@ -8,7 +8,7 @@ Main.html is the original file, new.html contains more customizability options.
 <a>http://www.ambrsoft.com/trigocalc/circle3d.htm</a>
 
 Demo:
-![Demo Image](images/demo.png)
+![Demo Image](https://github.com/gfitez/Desmos-Tracer/blob/master/images/Demo.PNG)
 
 Other examples:
 <ul>
